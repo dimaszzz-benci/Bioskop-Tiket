@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+{% if admin_login %}
+<form method="POST" class="mx-auto p-4 bg-dark text-light rounded" style="max-width:400px">
+  <h3>🔐 Admin</h3>
+  <input type="text" name="user" class="form-control mb-2" placeholder="Username">
+  <input type="password" name="pass" class="form-control mb-3" placeholder="Password">
+  <button class="btn btn-danger w-100">Masuk</button>
+</form>
+{% else %}
+<h2>📊 Admin Dashboard</h2>
+<div class="row g-3 mb-4">
+  <div class="col-md-3 bg-dark p-3 rounded text-light">🎬 {{ movies|length }} Film</div>
+  <div class="col-md-3 bg-dark p-3 rounded text-light">👥 {{ users|length }} User</div>
+  <div class="col-md-3 bg-dark p-3 rounded text-light">🎟️ {{ bookings|length }} Booking</div>
+  <div class="col-md-3 bg-dark p-3 rounded text-light">💰 Rp {{ '{:,}'.format(b.get('total',0) for b in bookings | sum).replace(',','.') }}</div>
+</div>
+<h4>📋 Riwayat Pembelian</h4>
+<table class="table table-dark table-striped">
+  <thead><tr><th>ID</th><th>User</th><th>Film</th><th>Tgl/Jam</th><th>Kursi</th><th>Metode</th><th>Total</th></tr></thead>
+  <tbody>{% for b in bookings[::-1] %}<tr>
+    <td>{{ b.id }}</td><td>{{ b.user }}</td><td>{{ b.movie }}</td><td>{{ b.date }} {{ b.time }}</td>
+    <td>{{ b.seats|join(', ') }}</td><td>{{ b.method }}</td><td>Rp {{ '{:,}'.format(b.total).replace(',','.') }}</td>
+  </tr>{% endfor %}</tbody>
+</table>
+<a href="/admin/films" class="btn btn-primary mt-2">Kelola Film</a>
+{% endif %}{% endblock %}
